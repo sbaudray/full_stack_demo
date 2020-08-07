@@ -1,0 +1,19 @@
+{
+  "name": "@self/webapp",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel serve ./src/index.html",
+    "build": "parcel build ./src/index.html"
+  },
+  "devDependencies": {
+    "parcel": "2.0.0-alpha.3.2"
+  },
+  "dependencies": {
+    "@types/react": "^16.9.44",
+    "@types/react-dom": "^16.9.8",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
