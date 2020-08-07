@@ -1,0 +1,15 @@
+{
+  "name": "full_stack_demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:sbaudray/full_stack_demo.git",
+  "author": "Sebastien Baudray <baudray.sebastien@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  }
+}
