@@ -2,13 +2,13 @@ import express from "express";
 import { graphqlHTTP } from "express-graphql";
 import { buildSchema } from "graphql";
 
-let schema = buildSchema(`type Query { hello: String }`);
+const schema = buildSchema(`type Query { hello: String }`);
 
-let root = {
+const root = {
   hello: () => "Hello world",
 };
 
-let app = express();
+const app = express();
 
 app.use(
   "/graphql",

@@ -10,9 +10,14 @@
     "graphql": "^15.3.0"
   },
   "scripts": {
-    "dev": "ts-node-dev index.ts"
+    "lint": "eslint --ext ts src",
+    "dev": "ts-node-dev src/index.ts"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.8.0",
+    "@typescript-eslint/parser": "^3.8.0",
+    "eslint": "^7.6.0",
+    "eslint-plugin-import": "^2.22.0",
     "ts-node-dev": "^1.0.0-pre.56",
     "typescript": "^3.9.7"
   }

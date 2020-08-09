@@ -2,8 +2,9 @@
   "name": "webapp",
   "version": "0.0.0",
   "scripts": {
+    "lint": "eslint --ext tsx src",
     "dev": "vite",
-    "build": "tsc && vite build"
+    "build": "yarn lint && tsc && vite build"
   },
   "dependencies": {
     "@pika/react": "^16.13.1",
@@ -12,6 +13,15 @@
   "devDependencies": {
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
+    "@typescript-eslint/eslint-plugin": "^3.8.0",
+    "@typescript-eslint/parser": "^3.8.0",
+    "babel-eslint": "10.x",
+    "eslint": "6.x",
+    "eslint-config-react-app": "^5.2.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "6.x",
+    "eslint-plugin-react": "7.x",
+    "eslint-plugin-react-hooks": "2.x",
     "typescript": "^3.9.3",
     "vite": "^1.0.0-rc.1",
     "vite-plugin-react": "^3.0.0"
