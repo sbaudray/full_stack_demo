@@ -1,19 +1,19 @@
 {
-  "name": "@self/webapp",
-  "version": "0.0.1",
-  "main": "index.js",
-  "license": "MIT",
+  "name": "webapp",
+  "version": "0.0.0",
   "scripts": {
-    "start": "parcel serve ./src/index.html",
-    "build": "parcel build ./src/index.html"
-  },
-  "devDependencies": {
-    "parcel": "2.0.0-alpha.3.2"
+    "dev": "vite",
+    "build": "tsc && vite build"
   },
   "dependencies": {
-    "@types/react": "^16.9.44",
+    "@pika/react": "^16.13.1",
+    "@pika/react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "typescript": "^3.9.3",
+    "vite": "^1.0.0-rc.1",
+    "vite-plugin-react": "^3.0.0"
   }
 }
