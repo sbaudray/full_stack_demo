@@ -3,33 +3,58 @@ import { graphqlHTTP } from "express-graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { MongoClient } from "mongodb";
 import * as MoviesDAO from "./movies.dao";
+import dotenv from "dotenv";
+import { IResolvers } from "graphql-tools";
 
-const uri =
-  "mongodb+srv://m001-student:m001-mongodb-basics@sandbox.qrbn6.mongodb.net?retryWrites=true";
+dotenv.config();
+
+const uri: string = process.env.MONGO_DB_URI as string;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   wtimeout: 2500,
+  useUnifiedTopology: true,
 });
 
 const typeDefs = `
 type Movie { 
-  title: String
+  _id: ID!
+  title: String!
+  director: String!
 } 
 
+input CreateMovieInput {
+  title: String!
+  director: String!
+}
+
+type CreateMoviePayload {
+  movie: Movie
+}
+
 type Query { 
-  hello: [Movie]
+  top10: [Movie]
+}
+
+type Mutation {
+  createMovie(input: CreateMovieInput!): CreateMoviePayload 
 }
 
 schema {
   query: Query
+  mutation: Mutation
 }
 `;
 
-const resolvers = {
+const resolvers: IResolvers = {
   Query: {
-    hello: async () => {
-      return await MoviesDAO.top10();
+    top10: () => {
+      return MoviesDAO.top10();
+    },
+  },
+  Mutation: {
+    createMovie: (_parent, { input }, _context) => {
+      return MoviesDAO.create(input);
     },
   },
 };
@@ -53,7 +78,9 @@ async function run() {
 
   console.log("Connected to Mongo server");
 
-  MoviesDAO.init(client);
+  let database = client.db("dev");
+
+  MoviesDAO.init(database);
 
   app.listen(port);
 

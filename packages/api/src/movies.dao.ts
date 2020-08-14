@@ -1,13 +1,35 @@
-import { MongoClient, Collection } from "mongodb";
+import { Collection, Db } from "mongodb";
 
 let movies: Collection;
 
-export async function init(client: MongoClient) {
+export function init(db: Db) {
   if (movies) return;
 
-  movies = client.db("sample_mflix").collection("movies");
+  movies = db.collection("movies");
 }
 
 export async function top10() {
   return await movies.find({}).limit(10).toArray();
+}
+
+export async function create(doc: { title: string; director: string }) {
+  // plot;
+  // genres;
+  // runtime;
+  // cast;
+  // num_mflix_comments;
+  // fullplot;
+  // countries;
+  // released;
+  // directors;
+  // rated;
+  // awards;
+  // lastupdated;
+  // year;
+  // imdbId;
+  let {
+    ops: [insertedMovie],
+  } = await movies.insertOne(doc);
+
+  return { movie: insertedMovie };
 }
