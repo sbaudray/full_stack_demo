@@ -10,12 +10,6 @@ dotenv.config();
 
 const uri: string = process.env.MONGO_DB_URI as string;
 
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  wtimeout: 2500,
-  useUnifiedTopology: true,
-});
-
 const typeDefs = `
 type Movie { 
   _id: ID!
@@ -74,11 +68,15 @@ app.use(
 const port = process.env.port || 4000;
 
 async function run() {
-  await client.connect();
+  let client = await MongoClient.connect(uri, {
+    useNewUrlParser: true,
+    wtimeout: 2500,
+    useUnifiedTopology: true,
+  });
 
   console.log("Connected to Mongo server");
 
-  let database = client.db("dev");
+  let database = client.db("demo_dev");
 
   MoviesDAO.init(database);
 

@@ -9,7 +9,11 @@ export function init(db: Db) {
 }
 
 export async function top10() {
-  return await movies.find({}).limit(10).toArray();
+  try {
+    return await movies.find({}).limit(10).toArray();
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function create(doc: { title: string; director: string }) {
