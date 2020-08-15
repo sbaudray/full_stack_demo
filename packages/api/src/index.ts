@@ -8,8 +8,6 @@ import { IResolvers } from "graphql-tools";
 
 dotenv.config();
 
-const uri: string = process.env.MONGO_DB_URI as string;
-
 const typeDefs = `
 type Movie { 
   _id: ID!
@@ -68,7 +66,7 @@ app.use(
 const port = process.env.port || 4000;
 
 async function run() {
-  let client = await MongoClient.connect(uri, {
+  let client = await MongoClient.connect(process.env.MONGO_DB_URI as string, {
     useNewUrlParser: true,
     wtimeout: 2500,
     useUnifiedTopology: true,
@@ -76,7 +74,7 @@ async function run() {
 
   console.log("Connected to Mongo server");
 
-  let database = client.db("demo_dev");
+  let database = client.db(process.env.MONGO_DB_NAME);
 
   MoviesDAO.init(database);
 
