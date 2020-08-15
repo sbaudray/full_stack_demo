@@ -1,5 +1,5 @@
 import * as MoviesDAO from "../movies.dao";
-import Global from "../types/node.global";
+import Global from "../__types__/node.global";
 declare var global: Global;
 
 beforeAll(() => {
