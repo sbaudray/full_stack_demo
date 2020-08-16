@@ -1,0 +1,5 @@
+schema: http://localhost:4000/graphql
+extensions:
+  introspect:
+    write: ./packages/webapp/schema.graphql
+      

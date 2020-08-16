@@ -5,6 +5,7 @@ import { MongoClient } from "mongodb";
 import * as MoviesDAO from "./movies.dao";
 import dotenv from "dotenv";
 import { IResolvers } from "graphql-tools";
+import cors from "cors";
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ const app = express();
 
 app.use(
   "/graphql",
+  cors(),
   graphqlHTTP({
     schema,
     graphiql: true,

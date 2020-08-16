@@ -1,0 +1,48 @@
+{
+  "name": "@self/web",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
+    "@graphql-inspector/cli": "^2.2.0",
+    "@rollup/plugin-babel": "^5.2.0",
+    "@rollup/plugin-commonjs": "^15.0.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-replace": "^2.3.3",
+    "@types/react": "^16.9.46",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-relay": "^7.0.8",
+    "@types/relay-runtime": "^10.0.3",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-relay": "^10.0.1",
+    "copy-webpack-plugin": "^6.0.3",
+    "graphql": "^15.3.0",
+    "nollup": "^0.13.5",
+    "react-refresh": "^0.8.3",
+    "relay-compiler": "^10.0.1",
+    "relay-compiler-language-typescript": "^13.0.1",
+    "rollup": "^2.26.0",
+    "rollup-plugin-react-refresh": "^0.0.2",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "scripts": {
+    "build": "yarn relay && webpack -p",
+    "dev": "yarn relay && webpack-dev-server --open",
+    "relay": "relay-compiler --src ./src --language typescript --schema ./schema.graphql"
+  },
+  "dependencies": {
+    "babel-plugin-macros": "^2.8.0",
+    "core-js": "3",
+    "react": "^0.0.0-experimental-94c0244ba",
+    "react-dom": "^0.0.0-experimental-94c0244ba",
+    "react-relay": "^0.0.0-experimental-183bdd28",
+    "relay-runtime": "^10.0.1"
+  }
+}
