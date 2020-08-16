@@ -1,0 +1,5 @@
+schema.graphql
+__generated__/
+dist/
+node_modules/
+
