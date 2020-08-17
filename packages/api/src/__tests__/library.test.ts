@@ -1,21 +1,21 @@
-import * as MoviesDAO from "../movies.dao";
+import * as Library from "../library";
 import Global from "../__types__/node.global";
 declare var global: Global;
 
 beforeAll(() => {
   global.database.dropDatabase();
 
-  MoviesDAO.init(global.database);
+  Library.init(global.database);
 });
 
-test("it works", async () => {
-  let movies = await MoviesDAO.top10();
-
-  expect(movies).toHaveLength(0);
+test("im not totally bad", async () => {
+  let movies = await Library.listMovies().toArray();
+  console.log(movies);
+  expect(movies.length).toBe(40);
 });
 
 test("can create a movie", async () => {
-  let result = await MoviesDAO.create({
+  let result = await Library.createMovie({
     title: "Batman",
     director: "Robin",
   });

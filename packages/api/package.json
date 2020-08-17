@@ -4,18 +4,21 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@types/bson": "^4.0.2",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-graphql": "^0.11.0",
     "faker": "^4.1.0",
     "graphql": "^15.3.0",
+    "graphql-relay": "^0.6.0",
     "graphql-tools": "^6.0.18",
-    "mongodb": "^3.6.0"
+    "mongodb": "^3.6.0",
+    "relay-mongodb-connection": "^2.1.0"
   },
   "scripts": {
     "lint": "eslint --ext ts src",
-    "dev": "ts-node-dev src/index.ts",
+    "dev": "ts-node-dev src/index.ts --transpile-only",
     "test": "jest"
   },
   "devDependencies": {
@@ -23,7 +26,8 @@
     "@babel/preset-typescript": "^7.10.4",
     "@types/cors": "^2.8.7",
     "@types/express": "^4.17.7",
-    "@types/jest": "^26.0.9",
+    "@types/graphql-relay": "^0.6.0",
+    "@types/jest": "^26.0.10",
     "@types/mongodb": "^3.5.25",
     "@typescript-eslint/parser": "^3.8.0",
     "eslint": "^7.6.0",
@@ -32,7 +36,7 @@
     "jest": "^26.4.0",
     "jest-environment-node": "^26.3.0",
     "node-mongodb-fixtures": "^3.2.5",
-    "ts-node-dev": "^1.0.0-pre.56",
+    "ts-node-dev": "^1.0.0-pre.57",
     "typescript": "^3.9.7"
   }
 }
