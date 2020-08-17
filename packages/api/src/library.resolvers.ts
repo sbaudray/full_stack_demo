@@ -18,5 +18,7 @@ export function createMovie(
   _: any,
   { input }: { input: { title: string; director: string } }
 ) {
-  return Library.createMovie(input);
+  let movie = Library.createMovie(input);
+
+  return { movie };
 }
