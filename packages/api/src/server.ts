@@ -1,11 +1,8 @@
 import express from "express";
 import { graphqlHTTP } from "express-graphql";
+import schema from "./graphql.schema";
 import cors from "cors";
-import typeDefs from "./graphql.types";
-import resolvers from "./graphql.resolvers";
-import { makeExecutableSchema } from "graphql-tools";
 
-const schema = makeExecutableSchema({ typeDefs, resolvers });
 const app = express();
 
 app.use(

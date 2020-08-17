@@ -1,4 +1,5 @@
 import { Collection, Db, ObjectId } from "mongodb";
+import * as Tagger from "./graphql.tagger";
 
 let movies: Collection;
 
@@ -8,19 +9,15 @@ export function init(db: Db) {
   movies = db.collection("movies");
 }
 
-export function tagMovie(obj: any) {
-  obj.__type = "Movie";
-
-  return obj;
-}
-
 export function cursorMovies() {
   return movies.find({});
 }
 
 export async function getMovie(id: string) {
   try {
-    return await movies.findOne({ _id: new ObjectId(id) });
+    let movie = await movies.findOne({ _id: new ObjectId(id) });
+
+    return Tagger.tagMovie(movie);
   } catch (error) {
     throw error;
   }
@@ -46,7 +43,7 @@ export async function createMovie(doc: { title: string; director: string }) {
       ops: [inserted],
     } = await movies.insertOne(doc);
 
-    return inserted;
+    return Tagger.tagMovie(inserted);
   } catch (error) {
     throw error;
   }

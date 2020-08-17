@@ -1,13 +1,14 @@
 // @ts-ignore
 import connectionFromMongoCursor from "relay-mongodb-connection";
 import * as Library from "./library";
+import * as Tagger from "./graphql.tagger";
 
 export function movies(_: any, args: any) {
   try {
     return connectionFromMongoCursor(
       Library.cursorMovies(),
       args,
-      Library.tagMovie
+      Tagger.tagMovie
     );
   } catch (error) {
     throw error;
