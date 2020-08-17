@@ -34,6 +34,7 @@ ${MovieEdge}
 type Query { 
   ${movies}
   node(id: ID!): Node
+  cat: String
 }
 
 type Mutation {

@@ -9,6 +9,7 @@ let resolvers: IResolvers = {
   Query: {
     movies: LibraryResolvers.movies,
     node: NodeResolvers.node,
+    cat: () => "cata",
   },
   Mutation: {
     createMovie: LibraryResolvers.createMovie,

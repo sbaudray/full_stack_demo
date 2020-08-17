@@ -1,7 +1,8 @@
 {
   "plugins": [
     ["relay", { "artifactDirectory": "./src/__generated__" }],
-    "macros"
+    "macros",
+    "transform-class-properties"
   ],
   "presets": [
     [
