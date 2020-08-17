@@ -6,30 +6,35 @@ import { AppMoviesQuery } from "./__generated__/AppMoviesQuery.graphql";
 
 const { Suspense } = React;
 
-// Define a query
 const MoviesQuery = graphql`
   query AppMoviesQuery {
-    top10 {
-      _id
-      title
-      director
+    movies {
+      edges {
+        node {
+          id
+          director
+          title
+        }
+      }
     }
   }
 `;
 
 function App() {
-  const { top10 } = useLazyLoadQuery<AppMoviesQuery>(MoviesQuery, {});
+  const { movies } = useLazyLoadQuery<AppMoviesQuery>(MoviesQuery, {});
+
+  if (!movies?.edges?.length) return <div>No Movies</div>;
 
   return (
     <div className="App">
       <ul>
-        {top10?.map((movie) => {
-          if (!movie) {
-            return null;
-          }
+        {movies.edges.map((edge) => {
+          let movie = edge?.node;
+
+          if (!movie) return null;
 
           return (
-            <li key={movie._id}>
+            <li key={movie.id}>
               <div>
                 {movie.title} - {movie.director}
               </div>
