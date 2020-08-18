@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import { RelayEnvironmentProvider, useLazyLoadQuery } from "react-relay/hooks";
 import { graphql } from "react-relay";
 import RelayEnvironment from "./RelayEnvironment";
@@ -67,14 +67,50 @@ export function App() {
   );
 }
 
-function Routing() {
+function LoginPage() {
+  function submitForm(event: SyntheticEvent<HTMLFormElement>) {
+    event.preventDefault();
+  }
+  return (
+    <>
+      <form onSubmit={submitForm}>
+        <input
+          id="username"
+          type="text"
+          placeholder="Email"
+          aria-label="Email"
+          autoComplete="username"
+        />
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          aria-label="Password"
+          autoComplete="current-password"
+        />
+        <button>Login</button>
+      </form>
+    </>
+  );
+}
+
+function AppForAliens() {
   return (
     <Router>
       <Switch>
         <Route exact path="/">
-          <div>Hello</div>
+          <LoginPage />
         </Route>
-        <Route path="/movies">
+      </Switch>
+    </Router>
+  );
+}
+
+function AppForCitizens() {
+  return (
+    <Router>
+      <Switch>
+        <Route exact path="/">
           <App />
         </Route>
       </Switch>
@@ -83,10 +119,12 @@ function Routing() {
 }
 
 function AppRoot() {
+  let isLoggedIn = false;
+
   return (
     <RelayEnvironmentProvider environment={RelayEnvironment}>
       <Suspense fallback={"Loading..."}>
-        <Routing />
+        {isLoggedIn ? <AppForCitizens /> : <AppForAliens />}
       </Suspense>
     </RelayEnvironmentProvider>
   );
