@@ -3,6 +3,7 @@ import { RelayEnvironmentProvider, useLazyLoadQuery } from "react-relay/hooks";
 import { graphql } from "react-relay";
 import RelayEnvironment from "./RelayEnvironment";
 import { AppMoviesQuery } from "./__generated__/AppMoviesQuery.graphql";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 const { Suspense } = React;
 
@@ -66,11 +67,26 @@ export function App() {
   );
 }
 
+function Routing() {
+  return (
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <div>Hello</div>
+        </Route>
+        <Route path="/movies">
+          <App />
+        </Route>
+      </Switch>
+    </Router>
+  );
+}
+
 function AppRoot() {
   return (
     <RelayEnvironmentProvider environment={RelayEnvironment}>
       <Suspense fallback={"Loading..."}>
-        <App />
+        <Routing />
       </Suspense>
     </RelayEnvironmentProvider>
   );
