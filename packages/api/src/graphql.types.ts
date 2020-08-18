@@ -12,6 +12,12 @@ type PageInfo {
   endCursor: String
 }
 
+type User {
+  id: ID!
+  username: String!
+  email: String!
+}
+
 type Movie implements Node { 
   id: ID!
   title: String!
@@ -31,6 +37,16 @@ ${MovieConnection}
 
 ${MovieEdge}
 
+input SignUpInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+type SignUpPayload {
+  user: User
+}
+
 type Query { 
   ${movies}
   node(id: ID!): Node
@@ -39,6 +55,7 @@ type Query {
 
 type Mutation {
   createMovie(input: CreateMovieInput!): CreateMoviePayload 
+  signUp(input: SignUpInput!): SignUpPayload
 }
 
 schema {
