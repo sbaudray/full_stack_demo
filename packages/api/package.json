@@ -19,7 +19,8 @@
   "scripts": {
     "lint": "eslint --ext ts src",
     "dev": "ts-node-dev src/index.ts --transpile-only",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.10.4",

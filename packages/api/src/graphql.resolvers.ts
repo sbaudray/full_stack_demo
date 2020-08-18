@@ -1,10 +1,11 @@
 import * as LibraryResolvers from "./library.resolvers";
 import * as NodeResolvers from "./node.resolvers";
 import { IResolvers } from "graphql-tools";
+import * as Movie from "./movie";
 
 let resolvers: IResolvers = {
   Movie: {
-    __isTypeOf: (obj: any) => obj.__type === "Movie",
+    __isTypeOf: Movie.is,
   },
   Query: {
     movies: LibraryResolvers.movies,

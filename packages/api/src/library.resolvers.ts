@@ -1,25 +1,12 @@
-// @ts-ignore
-import connectionFromMongoCursor from "relay-mongodb-connection";
 import * as Library from "./library";
-import * as Tagger from "./graphql.tagger";
+import * as Movie from "./movie";
 
-export function movies(_: any, args: any) {
-  try {
-    return connectionFromMongoCursor(
-      Library.cursorMovies(),
-      args,
-      Tagger.tagMovie
-    );
-  } catch (error) {
-    throw error;
-  }
+export async function movies(_: any, args: any) {
+  return await Library.moviesConnection(args);
 }
 
-export function createMovie(
-  _: any,
-  { input }: { input: { title: string; director: string } }
-) {
-  let movie = Library.createMovie(input);
+export async function createMovie(_: any, { input }: { input: Movie.toDb }) {
+  let movie = await Library.createMovie(input);
 
   return { movie };
 }

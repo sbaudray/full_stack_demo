@@ -1,7 +1,9 @@
 import { Collection, Db, ObjectId } from "mongodb";
-import * as Tagger from "./graphql.tagger";
+// @ts-ignore
+import connectionFromMongoCursor from "relay-mongodb-connection";
+import * as Movie from "./movie";
 
-let movies: Collection;
+let movies: Collection<Movie.fromDb>;
 
 export function init(db: Db) {
   if (movies) return;
@@ -9,21 +11,33 @@ export function init(db: Db) {
   movies = db.collection("movies");
 }
 
-export function cursorMovies() {
-  return movies.find({});
+export async function moviesConnection(args: any) {
+  try {
+    let connection = await connectionFromMongoCursor(
+      movies.find({}),
+      args,
+      Movie.make
+    );
+
+    return connection;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function getMovie(id: string) {
   try {
     let movie = await movies.findOne({ _id: new ObjectId(id) });
 
-    return Tagger.tagMovie(movie);
+    if (!movie) return null;
+
+    return Movie.make(movie);
   } catch (error) {
     throw error;
   }
 }
 
-export async function createMovie(doc: { title: string; director: string }) {
+export async function createMovie(doc: Movie.toDb) {
   // plot;
   // genres;
   // runtime;
@@ -43,7 +57,7 @@ export async function createMovie(doc: { title: string; director: string }) {
       ops: [inserted],
     } = await movies.insertOne(doc);
 
-    return Tagger.tagMovie(inserted);
+    return Movie.make(inserted);
   } catch (error) {
     throw error;
   }

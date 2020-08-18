@@ -34,6 +34,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "scripts": {
+    "test": "yarn jest",
     "build": "yarn relay && webpack -p",
     "dev": "yarn relay && webpack-dev-server --open",
     "relay": "relay-compiler --src ./src --language typescript --schema ./schema.graphql"
