@@ -20,6 +20,7 @@
     "babel-loader": "^8.1.0",
     "babel-plugin-relay": "^10.0.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "chalk": "^4.1.0",
     "copy-webpack-plugin": "^6.0.3",
     "graphql": "^15.3.0",
     "jest": "^26.4.0",
@@ -29,6 +30,7 @@
     "relay-compiler-language-typescript": "^13.0.1",
     "relay-test-utils": "^10.0.1",
     "typescript": "^3.9.7",
+    "util": "^0.12.3",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
