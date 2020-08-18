@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  RelayEnvironmentProvider,
-  useLazyLoadQuery,
-  useRelayEnvironment,
-} from "react-relay/hooks";
+import { RelayEnvironmentProvider, useLazyLoadQuery } from "react-relay/hooks";
 import { graphql } from "react-relay";
 import RelayEnvironment from "./RelayEnvironment";
 import { AppMoviesQuery } from "./__generated__/AppMoviesQuery.graphql";
-import { AppCatQuery } from "./__generated__/AppCatQuery.graphql";
 
 const { Suspense } = React;
 
@@ -25,25 +20,15 @@ const MoviesQuery = graphql`
   }
 `;
 
-export const CatQuery = graphql`
-  query AppCatQuery {
-    cat
-  }
-`;
-
 export class ErrorBoundary extends React.Component {
   state = {
     hasError: false,
   };
 
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError(_error: Error) {
     return {
       hasError: true,
     };
-  }
-
-  componentDidCatch(error: any) {
-    void 0;
   }
 
   render() {
@@ -55,43 +40,37 @@ export class ErrorBoundary extends React.Component {
   }
 }
 
-export function Cat() {
-  const data = useLazyLoadQuery<AppCatQuery>(CatQuery, {});
+export function App() {
+  const { movies } = useLazyLoadQuery<AppMoviesQuery>(MoviesQuery, {});
 
-  return <div>{data?.cat}</div>;
+  if (!movies?.edges?.length) return <div>No Movies</div>;
+
+  return (
+    <div className="App">
+      <ul>
+        {movies.edges.map((edge) => {
+          let movie = edge?.node;
+
+          if (!movie) return null;
+
+          return (
+            <li key={movie.id}>
+              <div>
+                {movie.title} - {movie.director}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
 }
-
-/* export function App() { */
-/*   const { movies } = useLazyLoadQuery<AppMoviesQuery>(MoviesQuery, {}); */
-
-/*   if (!movies?.edges?.length) return <div>No Movies</div>; */
-
-/*   return ( */
-/*     <div className="App"> */
-/*       <ul> */
-/*         {movies.edges.map((edge) => { */
-/*           let movie = edge?.node; */
-
-/*           if (!movie) return null; */
-
-/*           return ( */
-/*             <li key={movie.id}> */
-/*               <div> */
-/*                 {movie.title} - {movie.director} */
-/*               </div> */
-/*             </li> */
-/*           ); */
-/*         })} */
-/*       </ul> */
-/*     </div> */
-/*   ); */
-/* } */
 
 function AppRoot() {
   return (
     <RelayEnvironmentProvider environment={RelayEnvironment}>
       <Suspense fallback={"Loading..."}>
-        <Cat />
+        <App />
       </Suspense>
     </RelayEnvironmentProvider>
   );
