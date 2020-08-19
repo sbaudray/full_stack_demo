@@ -2,11 +2,14 @@ import * as LibraryResolvers from "./library.resolvers";
 import * as AccountResolvers from "./account.resolvers";
 import * as NodeResolvers from "./node.resolvers";
 import { IResolvers } from "graphql-tools";
-import * as Movie from "./movie";
+import { globalIdField } from "graphql-relay";
 
 let resolvers: IResolvers = {
   Movie: {
-    __isTypeOf: Movie.is,
+    id: globalIdField(),
+  },
+  User: {
+    id: globalIdField(),
   },
   Query: {
     movies: LibraryResolvers.movies,

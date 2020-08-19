@@ -19,7 +19,9 @@
   "scripts": {
     "lint": "eslint --ext ts src",
     "dev": "ts-node-dev src/index.ts --transpile-only",
-    "test": "jest",
+    "migrate:test": "MONGO_DB_NAME=demo_test migrate-mongo up",
+    "test": "yarn migrate:test && jest",
+    "test:watch": "yarn migrate:test && jest --watch",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
@@ -36,6 +38,7 @@
     "eslint-plugin-import": "^2.22.0",
     "jest": "^26.4.0",
     "jest-environment-node": "^26.3.0",
+    "migrate-mongo": "^8.1.1",
     "node-mongodb-fixtures": "^3.2.5",
     "ts-node-dev": "^1.0.0-pre.57",
     "typescript": "^3.9.7"

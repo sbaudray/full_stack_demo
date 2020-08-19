@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 import * as Library from "./library";
+import * as Account from "./account";
 import dotenv from "dotenv";
 import app from "./server";
 
@@ -19,6 +20,7 @@ async function run() {
   let database = client.db(process.env.MONGO_DB_NAME);
 
   Library.init(database);
+  Account.init(database);
 
   app.listen(port);
 

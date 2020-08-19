@@ -5,11 +5,19 @@ interface Node {
   id: ID!
 }
 
+interface Error {
+  message: String!
+}
+
 type PageInfo {
   hasPreviousPage: Boolean!
   hasNextPage: Boolean!
   startCursor: String
   endCursor: String
+}
+
+type DuplicateUserError implements Error {
+  message: String!
 }
 
 type User {
@@ -43,7 +51,9 @@ input SignUpInput {
   password: String!
 }
 
-type SignUpPayload {
+union SignUpPayload = SignUpSuccess | DuplicateUserError
+
+type SignUpSuccess {
   user: User
 }
 
