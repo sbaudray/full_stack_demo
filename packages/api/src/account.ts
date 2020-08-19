@@ -1,5 +1,6 @@
 import { Db, Collection } from "mongodb";
 import * as User from "./account.user";
+import argon2 from "argon2";
 
 let users: Collection<User.fromDb>;
 
@@ -48,7 +49,9 @@ export async function createUser(user: User.toDb) {
 }
 
 export async function signUp(data: User.toDb) {
-  let result = await createUser(data);
+  let passwordHash = await argon2.hash(data.password);
+
+  let result = await createUser({ ...data, password: passwordHash });
 
   if (result.__typename === "DuplicateUserError") return result;
 

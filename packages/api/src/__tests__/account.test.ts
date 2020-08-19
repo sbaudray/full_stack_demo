@@ -3,6 +3,13 @@ import Global from "../__types__/node.global";
 import { graphql } from "graphql";
 declare var global: Global;
 import schema from "../graphql.schema";
+import argon2 from "argon2";
+
+let validUser = {
+  email: "batman@robin.com",
+  username: "Batman",
+  password: "batcave",
+};
 
 beforeEach(async () => {
   await global.database.collection("users").deleteMany({});
@@ -24,13 +31,7 @@ test("signup an user", async () => {
   }
   `;
 
-  let params = {
-    input: {
-      email: "batman@robin.com",
-      username: "Batman",
-      password: "batcave",
-    },
-  };
+  let params = { input: { ...validUser } };
 
   let result = (await graphql(schema, mutation, null, null, params)) as any;
 
@@ -46,18 +47,19 @@ test("signup an user", async () => {
 });
 
 test("cannot signup twice", async () => {
-  let params = {
-    email: "batman@robin.com",
-    username: "Batman",
-    password: "batcave",
-  };
-
-  let user = await Account.signUp(params);
+  let user = await Account.signUp(validUser);
 
   expect(user.__typename).toBe("SignUpSuccess");
 
-  let duplicate = await Account.signUp(params);
+  let duplicate = await Account.signUp(validUser);
 
   expect(duplicate.__typename).toBe("DuplicateUserError");
 });
 
+test("it hashes the password", async () => {
+  let spy = jest.spyOn(argon2, "hash");
+
+  await Account.signUp(validUser);
+
+  expect(spy).toHaveBeenCalled();
+});

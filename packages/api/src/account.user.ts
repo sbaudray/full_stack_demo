@@ -5,6 +5,7 @@ export interface t {
   id: string;
   email: string;
   username: string;
+  password: string;
 }
 
 type ToDb<T> = Omit<T, "id" | "__typename">;
@@ -17,6 +18,7 @@ export type fromDb = FromDb<toDb>;
 export function make(data: fromDb): t {
   let id = data._id.toHexString();
   delete data._id;
+  delete data.password;
 
   return {
     id,
