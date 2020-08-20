@@ -19,6 +19,7 @@ let resolvers: IResolvers = {
   Mutation: {
     createMovie: LibraryResolvers.createMovie,
     signUp: AccountResolvers.signUp,
+    login: AccountResolvers.login,
   },
 };
 

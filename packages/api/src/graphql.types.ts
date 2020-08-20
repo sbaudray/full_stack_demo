@@ -5,7 +5,7 @@ interface Node {
   id: ID!
 }
 
-interface Error {
+interface ResultError {
   message: String!
 }
 
@@ -16,7 +16,7 @@ type PageInfo {
   endCursor: String
 }
 
-type DuplicateUserError implements Error {
+type DuplicateUser implements ResultError {
   message: String!
 }
 
@@ -51,10 +51,31 @@ input SignUpInput {
   password: String!
 }
 
-union SignUpPayload = SignUpSuccess | DuplicateUserError
-
-type SignUpSuccess {
+type SignUpPayload {
   user: User
+  resultErrors: [SignUpError!]!
+}
+
+union SignUpError = DuplicateUser
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type LoginPayload {
+  user: User
+  resultErrors: [LoginError!]!
+}
+
+union LoginError = InvalidCredentials
+
+type LoginSuccess {
+  user: User!
+}
+
+type InvalidCredentials implements ResultError {
+  message: String!
 }
 
 type Query { 
@@ -66,6 +87,7 @@ type Query {
 type Mutation {
   createMovie(input: CreateMovieInput!): CreateMoviePayload 
   signUp(input: SignUpInput!): SignUpPayload
+  login(input: LoginInput!): LoginPayload
 }
 
 schema {

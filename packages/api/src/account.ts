@@ -4,26 +4,19 @@ import argon2 from "argon2";
 
 let users: Collection<User.fromDb>;
 
-interface SignUpSuccess {
-  __typename: "SignUpSuccess";
-  user: User.t;
-}
-
-function SignUpSuccess(user: User.t): SignUpSuccess {
-  return {
-    __typename: "SignUpSuccess",
-    user,
-  };
-}
-
-interface Error<typename> {
+interface ResultError<typename> {
   __typename: typename;
   message: string;
 }
 
-let DuplicateUserError: Error<"DuplicateUserError"> = {
-  __typename: "DuplicateUserError",
+let DuplicateUser: ResultError<"DuplicateUser"> = {
+  __typename: "DuplicateUser",
   message: "An user already exists with this email",
+};
+
+let InvalidCredentials: ResultError<"InvalidCredentials"> = {
+  __typename: "InvalidCredentials",
+  message: "Invalid Credentials",
 };
 
 export function init(db: Db) {
@@ -41,11 +34,15 @@ export async function createUser(user: User.toDb) {
     return User.make(inserted);
   } catch (error) {
     if (String(error).startsWith("MongoError: E11000 duplicate key error")) {
-      return DuplicateUserError;
+      return DuplicateUser;
     }
 
     throw error;
   }
+}
+
+export function getUserByEmail(email: string) {
+  return users.findOne({ email });
 }
 
 export async function signUp(data: User.toDb) {
@@ -53,7 +50,32 @@ export async function signUp(data: User.toDb) {
 
   let result = await createUser({ ...data, password: passwordHash });
 
-  if (result.__typename === "DuplicateUserError") return result;
+  if (result.__typename === "DuplicateUser")
+    return { user: null, resultErrors: [result] };
 
-  return SignUpSuccess(result);
+  return { user: result, resultErrors: [] };
+}
+
+export async function login(data: User.toDb) {
+  try {
+    let user = await getUserByEmail(data.email);
+
+    if (!user) {
+      throw InvalidCredentials;
+    }
+
+    let passwordMatch = await argon2.verify(user.password, data.password);
+
+    if (!passwordMatch) {
+      throw InvalidCredentials;
+    }
+
+    return { user: User.make(user), resultErrors: [] };
+  } catch (error) {
+    if (error.__typename === "InvalidCredentials") {
+      return { user: null, resultErrors: [InvalidCredentials] };
+    }
+
+    throw error;
+  }
 }

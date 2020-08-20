@@ -11,49 +11,67 @@ let validUser = {
   password: "batcave",
 };
 
-beforeEach(async () => {
-  await global.database.collection("users").deleteMany({});
-  Account.init(global.database);
-});
-
-test("signup an user", async () => {
-  let mutation = `
+let signUpMutation = `
   mutation SignUp($input: SignUpInput!) {
     signUp(input: $input) {
-      ...on SignUpSuccess {
         user {
           id
           username
           email
         }
-      }
+        resultErrors {
+          __typename
+        }
     }
   }
   `;
 
-  let params = { input: { ...validUser } };
+let loginMutation = `
+  mutation Login($input: LoginInput!) {
+    login(input: $input) {
+        user {
+          id
+          username
+          email
+        }
+        resultErrors {
+          __typename
+        }
+      }
+    }
+  `;
 
-  let result = (await graphql(schema, mutation, null, null, params)) as any;
-
-  let {
-    data: {
-      signUp: { user },
-    },
-  } = result;
-
-  expect(user.username).toBe("Batman");
-  expect(user.email).toBe("batman@robin.com");
-  expect(user.id).toBeDefined();
+beforeEach(async () => {
+  await global.database.collection("users").deleteMany({});
+  Account.init(global.database);
 });
 
-test("cannot signup twice", async () => {
-  let user = await Account.signUp(validUser);
+test("signup an user, not twice", async () => {
+  let params = { input: { ...validUser } };
 
-  expect(user.__typename).toBe("SignUpSuccess");
+  let result = (await graphql(
+    schema,
+    signUpMutation,
+    null,
+    null,
+    params
+  )) as any;
 
-  let duplicate = await Account.signUp(validUser);
+  expect(result.data.signUp.user.username).toBe(validUser.username);
+  expect(result.data.signUp.user.email).toBe(validUser.email);
+  expect(result.data.signUp.user.id).toBeDefined();
+  expect(result.data.signUp.resultErrors).toHaveLength(0);
 
-  expect(duplicate.__typename).toBe("DuplicateUserError");
+  let duplicate = (await graphql(
+    schema,
+    signUpMutation,
+    null,
+    null,
+    params
+  )) as any;
+
+  expect(duplicate.data.signUp.user).toBeNull();
+  expect(duplicate.data.signUp.resultErrors).toHaveLength(1);
 });
 
 test("it hashes the password", async () => {
@@ -62,4 +80,44 @@ test("it hashes the password", async () => {
   await Account.signUp(validUser);
 
   expect(spy).toHaveBeenCalled();
+});
+
+test("can login", async () => {
+  await Account.signUp(validUser);
+
+  let params = {
+    input: { email: validUser.email, password: validUser.password },
+  };
+
+  let result = (await graphql(
+    schema,
+    loginMutation,
+    null,
+    null,
+    params
+  )) as any;
+
+  expect(result.data.login.user.id).toBeDefined();
+  expect(result.data.login.user.email).toBe(validUser.email);
+  expect(result.data.login.user.username).toBe(validUser.username);
+  expect(result.data.login.user.password).not.toBeDefined();
+  expect(result.data.login.resultErrors).toHaveLength(0);
+});
+
+test("can't login with invalid password", async () => {
+  await Account.signUp(validUser);
+
+  let params = {
+    input: { email: validUser.email, password: "INVALID" },
+  };
+  let result = (await graphql(
+    schema,
+    loginMutation,
+    null,
+    null,
+    params
+  )) as any;
+
+  expect(result.data.login.user).toBeNull();
+  expect(result.data.login.resultErrors).toHaveLength(1);
 });
