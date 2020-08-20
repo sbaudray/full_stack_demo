@@ -1,9 +1,14 @@
-import React, { SyntheticEvent } from "react";
-import { RelayEnvironmentProvider, useLazyLoadQuery } from "react-relay/hooks";
+import React, { SyntheticEvent, useState } from "react";
+import {
+  RelayEnvironmentProvider,
+  useLazyLoadQuery,
+  useMutation,
+} from "react-relay/hooks";
 import { graphql } from "react-relay";
 import RelayEnvironment from "./RelayEnvironment";
 import { AppMoviesQuery } from "./__generated__/AppMoviesQuery.graphql";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { AppLoginMutation } from "./__generated__/AppLoginMutation.graphql";
 
 const { Suspense } = React;
 
@@ -67,19 +72,52 @@ export function App() {
   );
 }
 
+let loginMutation = graphql`
+  mutation AppLoginMutation($input: LoginInput!) {
+    login(input: $input) {
+      user {
+        id
+        username
+        email
+      }
+      resultErrors {
+        ... on InvalidCredentials {
+          message
+        }
+      }
+    }
+  }
+`;
+
 function LoginPage() {
+  let [email, setEmail] = useState("");
+  let [password, setPassword] = useState("");
+  let [commit, inFlight] = useMutation<AppLoginMutation>(loginMutation);
+
   function submitForm(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    commit({
+      variables: {
+        input: { email, password },
+      },
+      onCompleted(response, errors) {
+        console.log(response, errors);
+      },
+    });
   }
+
   return (
     <>
       <form onSubmit={submitForm}>
         <input
-          id="username"
+          id="email"
           type="text"
           placeholder="Email"
           aria-label="Email"
-          autoComplete="username"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <input
           id="password"
@@ -87,8 +125,10 @@ function LoginPage() {
           placeholder="Password"
           aria-label="Password"
           autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <button>Login</button>
+        <button disabled={inFlight}>Login</button>
       </form>
     </>
   );
