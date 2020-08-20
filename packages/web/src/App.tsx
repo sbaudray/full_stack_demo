@@ -81,9 +81,7 @@ let loginMutation = graphql`
         email
       }
       resultErrors {
-        ... on InvalidCredentials {
-          message
-        }
+        message
       }
     }
   }
@@ -92,6 +90,7 @@ let loginMutation = graphql`
 function LoginPage() {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
+  let [error, setError] = useState<{ message: string } | null>(null);
   let [commit, inFlight] = useMutation<AppLoginMutation>(loginMutation);
 
   function submitForm(event: SyntheticEvent<HTMLFormElement>) {
@@ -101,8 +100,11 @@ function LoginPage() {
       variables: {
         input: { email, password },
       },
-      onCompleted(response, errors) {
-        console.log(response, errors);
+      onCompleted(response) {
+        if (response.login?.resultErrors.length) {
+          setError(response.login.resultErrors[0]);
+        }
+        console.log(response);
       },
     });
   }
@@ -129,6 +131,7 @@ function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button disabled={inFlight}>Login</button>
+        {error?.message}
       </form>
     </>
   );

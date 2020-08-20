@@ -65,13 +65,7 @@ input LoginInput {
 
 type LoginPayload {
   user: User
-  resultErrors: [LoginError!]!
-}
-
-union LoginError = InvalidCredentials
-
-type LoginSuccess {
-  user: User!
+  resultErrors: [InvalidCredentials!]!
 }
 
 type InvalidCredentials implements ResultError {
