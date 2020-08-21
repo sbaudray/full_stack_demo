@@ -15,13 +15,13 @@ export type toDb = ToDb<t>;
 export type fromDb = FromDb<toDb>;
 
 export function make(data: fromDb): t {
-  let id = data._id.toHexString();
-  delete data._id;
+  let { _id, ...rest } = data;
+
+  let id = _id.toHexString();
 
   return {
     id,
     __typename: "Movie",
-    ...data,
+    ...rest,
   };
 }
-

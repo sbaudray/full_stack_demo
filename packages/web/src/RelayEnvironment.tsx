@@ -21,6 +21,7 @@ async function fetchGraphQL(
       query: text,
       variables,
     }),
+    credentials: "include",
   });
 
   return await response.json();

@@ -1,9 +1,13 @@
 import * as Account from "../account";
+import app from "../server";
 import Global from "../__types__/node.global";
 import { graphql } from "graphql";
 declare var global: Global;
 import schema from "../graphql.schema";
 import argon2 from "argon2";
+import request from "supertest";
+import cookie from "cookie";
+import { differenceInCalendarDays } from "date-fns";
 
 let validUser = {
   email: "batman@robin.com",
@@ -46,7 +50,7 @@ beforeEach(async () => {
   Account.init(global.database);
 });
 
-test("signup an user, not twice", async () => {
+test("can signup an user, not twice", async () => {
   let params = { input: { ...validUser } };
 
   let result = (await graphql(
@@ -82,20 +86,26 @@ test("it hashes the password", async () => {
   expect(spy).toHaveBeenCalled();
 });
 
-test("can login", async () => {
+test("can login with valid credentials", async () => {
   await Account.signUp(validUser);
 
-  let params = {
-    input: { email: validUser.email, password: validUser.password },
-  };
+  let invalidPassword = (await graphql(schema, loginMutation, null, null, {
+    input: { email: validUser.email, password: "INVALID" },
+  })) as any;
 
-  let result = (await graphql(
-    schema,
-    loginMutation,
-    null,
-    null,
-    params
-  )) as any;
+  expect(invalidPassword.data.login.user).toBeNull();
+  expect(invalidPassword.data.login.resultErrors).toHaveLength(1);
+
+  let invalidEmail = (await graphql(schema, loginMutation, null, null, {
+    input: { email: "INVALID", password: validUser.password },
+  })) as any;
+
+  expect(invalidEmail.data.login.user).toBeNull();
+  expect(invalidEmail.data.login.resultErrors).toHaveLength(1);
+
+  let result = (await graphql(schema, loginMutation, null, null, {
+    input: { email: validUser.email, password: validUser.password },
+  })) as any;
 
   expect(result.data.login.user.id).toBeDefined();
   expect(result.data.login.user.email).toBe(validUser.email);
@@ -104,20 +114,31 @@ test("can login", async () => {
   expect(result.data.login.resultErrors).toHaveLength(0);
 });
 
-test("can't login with invalid password", async () => {
+it("should set a cookie when user is logged in", async () => {
   await Account.signUp(validUser);
 
-  let params = {
-    input: { email: validUser.email, password: "INVALID" },
-  };
-  let result = (await graphql(
-    schema,
-    loginMutation,
-    null,
-    null,
-    params
-  )) as any;
+  let alien = await request(app)
+    .post("/graphql")
+    .send({
+      query: loginMutation,
+      variables: { input: { email: "INVALID", password: "INVALID" } },
+    });
 
-  expect(result.data.login.user).toBeNull();
-  expect(result.data.login.resultErrors).toHaveLength(1);
+  expect(alien.header["set-cookie"]).not.toBeDefined();
+
+  let citizen = await request(app)
+    .post("/graphql")
+    .send({
+      query: loginMutation,
+      variables: {
+        input: { email: validUser.email, password: validUser.password },
+      },
+    });
+
+  expect(citizen.header["set-cookie"]).toBeDefined();
+
+  let [sessionCookie] = citizen.header["set-cookie"];
+  let { Expires } = cookie.parse(sessionCookie);
+
+  expect(differenceInCalendarDays(new Date(Expires), new Date())).toBe(7);
 });
