@@ -19,6 +19,11 @@ let InvalidCredentials: ResultError<"InvalidCredentials"> = {
   message: "Invalid Credentials",
 };
 
+export let NotAuthenticated: ResultError<"NotAuthenticated"> = {
+  __typename: "NotAuthenticated",
+  message: "User is not authenticated",
+};
+
 export function init(db: Db) {
   if (users) return;
 

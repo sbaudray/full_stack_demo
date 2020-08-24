@@ -2,7 +2,8 @@
   "plugins": [
     ["relay", { "artifactDirectory": "./src/__generated__" }],
     "macros",
-    "transform-class-properties"
+    "transform-class-properties",
+    "react-refresh/babel"
   ],
   "presets": [
     [

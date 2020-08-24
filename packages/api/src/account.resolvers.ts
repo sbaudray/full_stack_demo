@@ -21,3 +21,15 @@ export async function login(
 
   return result;
 }
+
+export async function me(
+  _parent: any,
+  _args: any,
+  context: Request | undefined
+) {
+  if (context?.session?.user) {
+    return { user: context.session.user, resultErrors: [] };
+  }
+
+  return { user: null, resultErrors: [Account.NotAuthenticated] };
+}

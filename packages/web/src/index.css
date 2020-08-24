@@ -1,0 +1,10 @@
+:global html,
+:global body,
+:global #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+

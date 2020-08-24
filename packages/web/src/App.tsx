@@ -1,141 +1,15 @@
-import React, { SyntheticEvent, useState } from "react";
-import {
-  RelayEnvironmentProvider,
-  useLazyLoadQuery,
-  useMutation,
-} from "react-relay/hooks";
+import React from "react";
+import { RelayEnvironmentProvider, useLazyLoadQuery } from "react-relay/hooks";
 import { graphql } from "react-relay";
 import RelayEnvironment from "./RelayEnvironment";
-import { AppMoviesQuery } from "./__generated__/AppMoviesQuery.graphql";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { AppLoginMutation } from "./__generated__/AppLoginMutation.graphql";
+import LoginPage from "./LoginPage";
+import HomePage from "./HomePage";
+import ErrorBoundary from "./ErrorBoundary";
+import * as UserContext from "./UserContext";
+import { AppMeQuery } from "./__generated__/AppMeQuery.graphql";
 
 const { Suspense } = React;
-
-const MoviesQuery = graphql`
-  query AppMoviesQuery {
-    movies {
-      edges {
-        node {
-          id
-          director
-          title
-        }
-      }
-    }
-  }
-`;
-
-export class ErrorBoundary extends React.Component {
-  state = {
-    hasError: false,
-  };
-
-  static getDerivedStateFromError(_error: Error) {
-    return {
-      hasError: true,
-    };
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return <div>Error</div>;
-    }
-
-    return this.props.children;
-  }
-}
-
-export function App() {
-  const { movies } = useLazyLoadQuery<AppMoviesQuery>(MoviesQuery, {});
-
-  if (!movies?.edges?.length) return <div>No Movies</div>;
-
-  return (
-    <div className="App">
-      <ul>
-        {movies.edges.map((edge) => {
-          let movie = edge?.node;
-
-          if (!movie) return null;
-
-          return (
-            <li key={movie.id}>
-              <div>
-                {movie.title} - {movie.director}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-let loginMutation = graphql`
-  mutation AppLoginMutation($input: LoginInput!) {
-    login(input: $input) {
-      user {
-        id
-        username
-        email
-      }
-      resultErrors {
-        message
-      }
-    }
-  }
-`;
-
-function LoginPage() {
-  let [email, setEmail] = useState("");
-  let [password, setPassword] = useState("");
-  let [error, setError] = useState<{ message: string } | null>(null);
-  let [commit, inFlight] = useMutation<AppLoginMutation>(loginMutation);
-
-  function submitForm(event: SyntheticEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    commit({
-      variables: {
-        input: { email, password },
-      },
-      onCompleted(response) {
-        if (response.login?.resultErrors.length) {
-          setError(response.login.resultErrors[0]);
-        }
-        console.log(response);
-      },
-    });
-  }
-
-  return (
-    <>
-      <form onSubmit={submitForm}>
-        <input
-          id="email"
-          type="text"
-          placeholder="Email"
-          aria-label="Email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          id="password"
-          type="password"
-          placeholder="Password"
-          aria-label="Password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button disabled={inFlight}>Login</button>
-        {error?.message}
-      </form>
-    </>
-  );
-}
 
 function AppForAliens() {
   return (
@@ -154,21 +28,51 @@ function AppForCitizens() {
     <Router>
       <Switch>
         <Route exact path="/">
-          <App />
+          <HomePage />
         </Route>
       </Switch>
     </Router>
   );
 }
 
-function AppRoot() {
-  let isLoggedIn = false;
+let MeQuery = graphql`
+  query AppMeQuery {
+    me {
+      user {
+        username
+        email
+        id
+      }
+      resultErrors {
+        message
+      }
+    }
+  }
+`;
 
+function AppGate() {
+  let isLoggedIn = UserContext.useState();
+  let userDispatch = UserContext.useDispatch();
+
+  let { me } = useLazyLoadQuery<AppMeQuery>(MeQuery, {});
+
+  if (me?.user) {
+    userDispatch({ type: "setUser", payload: me.user });
+  }
+
+  return isLoggedIn ? <AppForCitizens /> : <AppForAliens />;
+}
+
+function AppRoot() {
   return (
     <RelayEnvironmentProvider environment={RelayEnvironment}>
-      <Suspense fallback={"Loading..."}>
-        {isLoggedIn ? <AppForCitizens /> : <AppForAliens />}
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={"Loading..."}>
+          <UserContext.Provider>
+            <AppGate />
+          </UserContext.Provider>
+        </Suspense>
+      </ErrorBoundary>
     </RelayEnvironmentProvider>
   );
 }

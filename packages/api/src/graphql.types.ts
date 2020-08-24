@@ -68,6 +68,15 @@ type LoginPayload {
   resultErrors: [InvalidCredentials!]!
 }
 
+type MePayload {
+  user: User
+  resultErrors: [NotAuthenticated!]!
+}
+
+type NotAuthenticated implements ResultError {
+  message: String!
+}
+
 type InvalidCredentials implements ResultError {
   message: String!
 }
@@ -75,7 +84,7 @@ type InvalidCredentials implements ResultError {
 type Query { 
   ${movies}
   node(id: ID!): Node
-  cat: String
+  me: MePayload
 }
 
 type Mutation {

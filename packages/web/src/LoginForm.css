@@ -1,0 +1,62 @@
+.root {
+  width: 300px;
+}
+
+.heading {
+  color: #3b4859;
+  font-family: sans-serif;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.label {
+  color: #3b4859;
+  font-family: sans-serif;
+  font-size: 0.9rem;
+  margin-left: 1rem;
+}
+
+.input {
+  border: 1px solid #d6dde2;
+  border-radius: 20px;
+  padding: 1rem;
+  margin-top: 4px;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #475868;
+}
+
+.input + .label {
+  margin-top: 20px;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.loginButton {
+  background: #3b4859;
+  color: white;
+  font-family: sans-serif;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.loginButton:focus {
+  opacity: 0.8;
+}
+
+.errorMessage {
+  color: red;
+  font-family: sans-serif;
+  margin-top: 1rem;
+  text-align: center;
+}

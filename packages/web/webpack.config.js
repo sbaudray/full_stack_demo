@@ -1,5 +1,6 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const ReactRefresh = require("@pmmmwh/react-refresh-webpack-plugin");
 
 module.exports = {
   entry: "./src/index.tsx",
@@ -10,6 +11,7 @@ module.exports = {
   devServer: {
     contentBase: "./dist",
     port: 3000,
+    hot: true,
     historyApiFallback: true,
   },
   module: {
@@ -17,6 +19,13 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: { loader: "babel-loader" },
+      },
+      {
+        test: /\.css/,
+        use: [
+          "style-loader",
+          { loader: "css-loader", options: { modules: true } },
+        ],
       },
     ],
   },
@@ -27,5 +36,6 @@ module.exports = {
     new CopyPlugin({
       patterns: [{ from: "public/index.html", to: "" }],
     }),
+    new ReactRefresh(),
   ],
 };
