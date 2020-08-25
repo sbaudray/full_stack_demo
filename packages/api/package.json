@@ -19,6 +19,7 @@
     "graphql-relay": "^0.6.0",
     "graphql-tools": "^6.0.18",
     "mongodb": "^3.6.0",
+    "node-fetch": "^2.6.0",
     "relay-mongodb-connection": "^2.1.0"
   },
   "scripts": {
@@ -38,6 +39,7 @@
     "@types/graphql-relay": "^0.6.0",
     "@types/jest": "^26.0.10",
     "@types/mongodb": "^3.5.25",
+    "@types/node-fetch": "^2.5.7",
     "@types/supertest": "^2.0.10",
     "@typescript-eslint/parser": "^3.8.0",
     "eslint": "^7.6.0",

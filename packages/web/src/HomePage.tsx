@@ -1,6 +1,7 @@
 import React from "react";
 import AppHeader from "./AppHeader";
 import styles from "./HomePage.css";
+import MovieSearchEngine from "./MovieSearchEngine";
 
 let userLibraries = [
   {
@@ -18,9 +19,10 @@ export default function Homepage() {
   return (
     <div>
       <AppHeader />
-      {userLibraries.map((library) => {
+      <MovieSearchEngine />
+      {userLibraries.map((library, index) => {
         return (
-          <>
+          <React.Fragment key={index}>
             <h1>{library.name}</h1>
             <ul className={styles.moviesList}>
               {library.movies.map((movie) => {
@@ -31,7 +33,7 @@ export default function Homepage() {
                 );
               })}
             </ul>
-          </>
+          </React.Fragment>
         );
       })}
     </div>

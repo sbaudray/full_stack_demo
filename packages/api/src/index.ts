@@ -1,10 +1,11 @@
+// always keep dotenv on top
+import dotenv from "dotenv";
+dotenv.config();
+//
 import { MongoClient } from "mongodb";
 import * as Library from "./library";
 import * as Account from "./account";
-import dotenv from "dotenv";
 import app from "./server";
-
-dotenv.config();
 
 const port = process.env.port || 4000;
 

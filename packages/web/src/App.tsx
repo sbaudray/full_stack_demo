@@ -56,9 +56,11 @@ function AppGate() {
 
   let { me } = useLazyLoadQuery<AppMeQuery>(MeQuery, {});
 
-  if (me?.user) {
-    userDispatch({ type: "setUser", payload: me.user });
-  }
+  React.useEffect(() => {
+    if (me?.user) {
+      userDispatch({ type: "setUser", payload: me.user });
+    }
+  }, [me, userDispatch]);
 
   return isLoggedIn ? <AppForCitizens /> : <AppForAliens />;
 }

@@ -32,6 +32,30 @@ type Movie implements Node {
   director: String!
 } 
 
+type MovieByTitleSearchResult {
+  title: String!,
+  year: String!,
+  imdbId: String!,
+  poster: String!,
+}
+
+type MovieByImdbIdSearchResult {
+  actors: String!,
+  country: String!,
+  director: String!,
+  genres: String!,
+  imdbId: String!,
+  imdbRating: String,
+  languages: String
+  plot: String!,
+  poster: String!,
+  released: String!,
+  runtime: String,
+  title: String!,
+  writer: String,
+  year: String!,
+}
+
 input CreateMovieInput {
   title: String!
   director: String!
@@ -85,6 +109,8 @@ type Query {
   ${movies}
   node(id: ID!): Node
   me: MePayload
+  searchMovieByTitle(title: String!): [MovieByTitleSearchResult!]
+  searchMovieByImdbId(id: String!): MovieByImdbIdSearchResult
 }
 
 type Mutation {

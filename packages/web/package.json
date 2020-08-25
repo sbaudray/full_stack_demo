@@ -14,7 +14,7 @@
     "@testing-library/react": "^10.4.8",
     "@types/react": "^16.9.46",
     "@types/react-dom": "^16.9.8",
-    "@types/react-relay": "^7.0.8",
+    "@types/react-relay": "^7.0.9",
     "@types/react-router-dom": "^5.1.5",
     "@types/react-test-renderer": "^16.9.3",
     "@types/relay-runtime": "^10.0.3",
