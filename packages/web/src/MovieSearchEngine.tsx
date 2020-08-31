@@ -1,11 +1,17 @@
 import React from "react";
 import styles from "./MovieSearchEngine.css";
 import { graphql } from "react-relay";
-import { useQueryLoader, usePreloadedQuery } from "react-relay/hooks";
+import {
+  useQueryLoader,
+  usePreloadedQuery,
+  useMutation,
+} from "react-relay/hooks";
 import { MovieSearchEngineByTitleQuery } from "./__generated__/MovieSearchEngineByTitleQuery.graphql";
 import { PreloadedQuery } from "react-relay/lib/relay-experimental/EntryPointTypes";
 import { useDebounce } from "./useDebounce";
 import { MovieSearchEngineDetailsQuery } from "./__generated__/MovieSearchEngineDetailsQuery.graphql";
+import { MovieSearchEngineAddMovieToBookcaseMutation } from "./__generated__/MovieSearchEngineAddMovieToBookcaseMutation.graphql";
+import * as UserContext from "./UserContext";
 
 let searchQuery = graphql`
   query MovieSearchEngineByTitleQuery($title: String!) {
@@ -35,6 +41,16 @@ let movieDetailsQuery = graphql`
       genres
       country
       actors
+    }
+  }
+`;
+
+let addMovieToBookcaseMutation = graphql`
+  mutation MovieSearchEngineAddMovieToBookcaseMutation(
+    $input: AddMovieToBookcaseInput!
+  ) {
+    addMovieToBookcase(input: $input) {
+      ok
     }
   }
 `;
@@ -75,7 +91,7 @@ export default function MovieSearchEngine() {
         value={searchString}
         onChange={(e) => setSearchString(e.target.value)}
       />
-      {selectedMovieId ? (
+      {selectedMovieId && movieDetailsQueryReference !== null ? (
         <React.Suspense fallback="loading details">
           <MovieDetails
             disposeQuery={disposeMovieDetailsQuery}
@@ -83,7 +99,7 @@ export default function MovieSearchEngine() {
           />
         </React.Suspense>
       ) : null}
-      {searchQueryReference !== null ? (
+      {searchString && searchQueryReference !== null ? (
         <React.Suspense fallback="loading results">
           <SearchResults
             selectMovie={selectMovie}
@@ -102,28 +118,42 @@ interface MovieDetailsProps {
 }
 
 function MovieDetails({ queryReference, disposeQuery }: MovieDetailsProps) {
+  let user = UserContext.useState();
   let data = usePreloadedQuery<MovieSearchEngineDetailsQuery>(
     movieDetailsQuery,
     queryReference
   );
 
+  let [commit, isInFlight] = useMutation<
+    MovieSearchEngineAddMovieToBookcaseMutation
+  >(addMovieToBookcaseMutation);
+
+  function addMovieToBookcase() {
+    if (!user || !data.searchMovieByImdbId) return;
+
+    commit({
+      variables: {
+        input: {
+          movie: data.searchMovieByImdbId,
+          bookcaseId: user?.bookcases[0],
+        },
+      },
+      onCompleted: (data) => console.log(data),
+    });
+  }
+
   if (!data.searchMovieByImdbId) {
     return null;
   }
+
   let {
     actors,
     country,
     director,
     genres,
-    imdbId,
-    imdbRating,
-    languages,
-    plot,
     poster,
-    released,
     runtime,
     title,
-    writer,
     year,
   } = data.searchMovieByImdbId;
 
@@ -159,7 +189,7 @@ function MovieDetails({ queryReference, disposeQuery }: MovieDetailsProps) {
           <strong>Runtime: </strong>
           {runtime}
         </div>
-        <button>Add to Collection</button>
+        <button onClick={addMovieToBookcase}>Add to Collection</button>
       </div>
     </div>
   );

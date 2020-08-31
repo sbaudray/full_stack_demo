@@ -39,9 +39,10 @@ let MeQuery = graphql`
   query AppMeQuery {
     me {
       user {
+        id
         username
         email
-        id
+        bookcases
       }
       resultErrors {
         message
@@ -62,7 +63,7 @@ function AppGate() {
     }
   }, [me, userDispatch]);
 
-  return isLoggedIn ? <AppForCitizens /> : <AppForAliens />;
+  return me?.user || isLoggedIn ? <AppForCitizens /> : <AppForAliens />;
 }
 
 function AppRoot() {

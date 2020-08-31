@@ -1,4 +1,5 @@
 import * as Account from "../account";
+import * as Library from "../library";
 import app from "../server";
 import Global from "../__types__/node.global";
 import { graphql } from "graphql";
@@ -47,7 +48,8 @@ let loginMutation = `
 
 beforeEach(async () => {
   await global.database.collection("users").deleteMany({});
-  Account.init(global.database);
+  Account.init(global.mongoClient);
+  Library.init(global.mongoClient);
 });
 
 test("can signup an user, not twice", async () => {

@@ -10,33 +10,7 @@ beforeEach(async () => {
   await global.database.collection("movies").deleteMany({});
   await global.database.collection("movies").insertMany(moviesFixtures);
 
-  Library.init(global.database);
-});
-
-it("creates a movie", async () => {
-  let mutation = `
-  mutation CreateMovie($input: CreateMovieInput!) {
-    createMovie(input: $input) {
-      movie {
-        id
-        director
-        title
-      }
-    }
-  }
-  `;
-
-  let params = { input: { title: "Batman", director: "Robin" } };
-
-  let {
-    data: {
-      createMovie: { movie },
-    },
-  } = (await graphql(schema, mutation, null, null, params)) as any;
-
-  expect(movie.title).toBe("Batman");
-  expect(movie.director).toBe("Robin");
-  expect(movie.id).toBeDefined();
+  Library.init(global.mongoClient);
 });
 
 it("returns a connection", async () => {

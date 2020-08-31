@@ -18,10 +18,8 @@ async function run() {
 
   console.log("Connected to Mongo server");
 
-  let database = client.db(process.env.MONGO_DB_NAME);
-
-  Library.init(database);
-  Account.init(database);
+  Library.init(client);
+  Account.init(client);
 
   app.listen(port);
 

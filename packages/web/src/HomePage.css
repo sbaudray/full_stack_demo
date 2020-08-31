@@ -2,8 +2,8 @@
   display: grid;
   padding: 0 1rem;
   grid-gap: 2rem;
-  grid-template-columns: repeat(auto-fill, 175px);
-  grid-auto-rows: 200px;
+  grid-template-columns: repeat(auto-fill, 200px);
+  grid-auto-rows: 275px;
 }
 
 .movieCard {

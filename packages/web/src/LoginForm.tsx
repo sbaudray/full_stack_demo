@@ -11,6 +11,7 @@ let loginMutation = graphql`
         id
         username
         email
+        bookcases
       }
       resultErrors {
         message

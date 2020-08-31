@@ -3,8 +3,20 @@ import { ObjectId } from "bson";
 export interface t {
   __typename: "Movie";
   id: string;
-  title: string;
+  actors: string;
+  country: string;
   director: string;
+  genres: string;
+  imdbId: string;
+  imdbRating: string;
+  languages: string;
+  plot: string;
+  poster: string;
+  released: string;
+  runtime: string;
+  title: string;
+  writer: string;
+  year: string;
 }
 
 type ToDb<T> = Omit<T, "id" | "__typename">;

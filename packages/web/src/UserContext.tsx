@@ -4,6 +4,7 @@ type User = {
   id: string;
   username: string;
   email: string;
+  bookcases: readonly string[];
 };
 
 type Action = { type: "setUser"; payload: User };
