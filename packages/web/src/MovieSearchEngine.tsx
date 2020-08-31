@@ -12,6 +12,7 @@ import { useDebounce } from "./useDebounce";
 import { MovieSearchEngineDetailsQuery } from "./__generated__/MovieSearchEngineDetailsQuery.graphql";
 import { MovieSearchEngineAddMovieToBookcaseMutation } from "./__generated__/MovieSearchEngineAddMovieToBookcaseMutation.graphql";
 import * as UserContext from "./UserContext";
+import { ConnectionHandler } from "relay-runtime";
 
 let searchQuery = graphql`
   query MovieSearchEngineByTitleQuery($title: String!) {
@@ -50,7 +51,13 @@ let addMovieToBookcaseMutation = graphql`
     $input: AddMovieToBookcaseInput!
   ) {
     addMovieToBookcase(input: $input) {
-      ok
+      movie {
+        id
+        title
+        poster
+        year
+        director
+      }
     }
   }
 `;
@@ -117,16 +124,16 @@ interface MovieDetailsProps {
   disposeQuery: any;
 }
 
-function MovieDetails({ queryReference, disposeQuery }: MovieDetailsProps) {
+function MovieDetails({ queryReference }: MovieDetailsProps) {
   let user = UserContext.useState();
   let data = usePreloadedQuery<MovieSearchEngineDetailsQuery>(
     movieDetailsQuery,
     queryReference
   );
 
-  let [commit, isInFlight] = useMutation<
-    MovieSearchEngineAddMovieToBookcaseMutation
-  >(addMovieToBookcaseMutation);
+  let [commit] = useMutation<MovieSearchEngineAddMovieToBookcaseMutation>(
+    addMovieToBookcaseMutation
+  );
 
   function addMovieToBookcase() {
     if (!user || !data.searchMovieByImdbId) return;
@@ -138,7 +145,35 @@ function MovieDetails({ queryReference, disposeQuery }: MovieDetailsProps) {
           bookcaseId: user?.bookcases[0],
         },
       },
-      onCompleted: (data) => console.log(data),
+      updater: (store) => {
+        if (!user?.bookcases[0]) return;
+
+        let bookcaseRecord = store.get(user?.bookcases[0]);
+
+        let connectionRecord =
+          bookcaseRecord &&
+          ConnectionHandler.getConnection(
+            bookcaseRecord,
+            "HomePage_bookcases_movies"
+          );
+
+        let payload = store.getRootField("addMovieToBookcase");
+
+        let edge = payload.getLinkedRecord("movie");
+
+        let newEdge =
+          connectionRecord &&
+          ConnectionHandler.createEdge(
+            store,
+            connectionRecord,
+            edge,
+            "MovieEdge"
+          );
+
+        if (newEdge && connectionRecord) {
+          ConnectionHandler.insertEdgeAfter(connectionRecord, newEdge);
+        }
+      },
     });
   }
 

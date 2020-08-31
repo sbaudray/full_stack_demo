@@ -12,7 +12,7 @@ let bookcasesQuery = graphql`
     bookcases {
       id
       name
-      movies(first: 10) {
+      movies(first: 20) @connection(key: "HomePage_bookcases_movies") {
         edges {
           node {
             id

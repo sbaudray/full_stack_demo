@@ -1,6 +1,7 @@
 import * as Bookcase from "./library.bookcase";
 import * as Library from "./library";
 import { Request } from "express";
+import { toGlobalId, fromGlobalId } from "graphql-relay";
 
 export async function movies(_: any, args: any) {
   return await Library.moviesConnection(args);
@@ -31,9 +32,9 @@ export async function getBookcasesIdByUserId(
 
   if (!userId) return [];
 
-  let bookcases = Library.getBookcasesIdsByUserId({ userId });
+  let bookcasesIds = await Library.getBookcasesIdsByUserId({ userId });
 
-  return bookcases;
+  return bookcasesIds.map((id) => toGlobalId("Bookcase", id));
 }
 
 export async function moviesConnectionFromBookcase(
@@ -44,10 +45,12 @@ export async function moviesConnectionFromBookcase(
 }
 
 export async function addMovieToBookcase(_parent: any, { input }: any) {
-  let ok = await Library.addMovieToBookcase({
+  let { id: bookcaseId } = fromGlobalId(input.bookcaseId);
+
+  let movie = await Library.addMovieToBookcase({
     movie: input.movie,
-    bookcaseId: input.bookcaseId,
+    bookcaseId,
   });
 
-  return { ok };
+  return { movie };
 }

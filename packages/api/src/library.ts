@@ -50,14 +50,14 @@ export async function addMovieToBookcase({
   bookcaseId: string;
 }) {
   try {
-    await upsertMovie(movie);
+    let upsertedMovie = await upsertMovie(movie);
 
-    let { result } = await bookcases.updateOne(
+    await bookcases.updateOne(
       { _id: new ObjectId(bookcaseId) },
       { $addToSet: { movies: movie.imdbId } }
     );
 
-    return !!result.ok;
+    return upsertedMovie;
   } catch (error) {
     throw error;
   }
@@ -140,16 +140,16 @@ export async function createMovie(doc: Movie.toDb) {
 
 export async function upsertMovie(movie: Movie.toDb) {
   try {
-    let result = await movies.updateOne(
+    let result = await movies.findOneAndUpdate(
       { imdbId: movie.imdbId },
       { $setOnInsert: movie },
       {
         upsert: true,
+        returnOriginal: false,
       }
     );
 
-    // upsertedId can be null
-    return result.upsertedId?._id;
+    return Movie.make(result.value as Movie.fromDb);
   } catch (error) {
     throw error;
   }

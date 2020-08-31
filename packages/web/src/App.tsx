@@ -52,18 +52,29 @@ let MeQuery = graphql`
 `;
 
 function AppGate() {
-  let isLoggedIn = UserContext.useState();
+  let [hasLoggedIn, setHasLoggedIn] = React.useState(false);
+  let user = UserContext.useState();
   let userDispatch = UserContext.useDispatch();
 
   let { me } = useLazyLoadQuery<AppMeQuery>(MeQuery, {});
 
   React.useEffect(() => {
     if (me?.user) {
-      userDispatch({ type: "setUser", payload: me.user });
+      setHasLoggedIn(true);
+      userDispatch({ type: "login", payload: me.user });
     }
   }, [me, userDispatch]);
 
-  return me?.user || isLoggedIn ? <AppForCitizens /> : <AppForAliens />;
+  // When a logged in user refreshes the page, we dont want the
+  // AppForAliens to flash since the userDispatch is asynchronous
+  // so we check for me.user in between, and only this time to
+  // allow logout through the user context
+
+  return (!hasLoggedIn && me?.user) || !!user ? (
+    <AppForCitizens />
+  ) : (
+    <AppForAliens />
+  );
 }
 
 function AppRoot() {

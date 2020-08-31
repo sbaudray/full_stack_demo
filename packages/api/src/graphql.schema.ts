@@ -224,7 +224,7 @@ let signUpMutation = {
 let addMovieToBookcaseMutationOutput = new GraphQLObjectType({
   name: "AddMovieToBookcasePayload",
   fields: () => ({
-    ok: { type: new GraphQLNonNull(GraphQLBoolean) },
+    movie: { type: movieType },
   }),
 });
 
