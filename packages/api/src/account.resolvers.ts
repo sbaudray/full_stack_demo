@@ -29,6 +29,18 @@ export async function login(
   return result;
 }
 
+export async function logout(
+  _parent: any,
+  _args: any,
+  context: Request | undefined
+) {
+  if (context?.session?.user) {
+    delete context.session.user;
+  }
+
+  return { ok: true };
+}
+
 export async function me(
   _parent: any,
   _args: any,

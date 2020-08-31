@@ -39,7 +39,7 @@ export default function LoginForm() {
           setError(response.login.resultErrors[0]);
         }
         if (response.login?.user) {
-          userDispatch({ type: "setUser", payload: response.login.user });
+          userDispatch({ type: "login", payload: response.login.user });
         }
       },
     });

@@ -258,10 +258,23 @@ let meOutput = new GraphQLObjectType({
   }),
 });
 
+let logoutMutationOutpout = new GraphQLObjectType({
+  name: "LogoutPayload",
+  fields: () => ({
+    ok: { type: new GraphQLNonNull(GraphQLString) },
+  }),
+});
+
+let logoutMutation = {
+  type: logoutMutationOutpout,
+  resolve: AccountResolvers.logout,
+};
+
 let mutationType = new GraphQLObjectType({
   name: "Mutation",
   fields: () => ({
     login: loginMutation,
+    logout: logoutMutation,
     signUp: signUpMutation,
     addMovieToBookcase: addMovieToBookcaseMutation,
   }),

@@ -7,7 +7,7 @@ type User = {
   bookcases: readonly string[];
 };
 
-type Action = { type: "setUser"; payload: User };
+type Action = { type: "login"; payload: User } | { type: "logout" };
 
 let UserContext = React.createContext<User | null | undefined>(undefined);
 
@@ -17,8 +17,10 @@ let UserDispatchContext = React.createContext<Dispatch<Action> | undefined>(
 
 function userReducer(user: User | null, action: Action) {
   switch (action.type) {
-    case "setUser":
+    case "login":
       return action.payload;
+    case "logout":
+      return null;
     default:
       return user;
   }
