@@ -3,11 +3,12 @@ import { RelayEnvironmentProvider, useLazyLoadQuery } from "react-relay/hooks";
 import { graphql } from "react-relay";
 import RelayEnvironment from "./RelayEnvironment";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import LoginPage from "./LoginPage";
-import HomePage from "./HomePage";
+import LoginRoot from "./LoginRoot";
+import HomeRoot from "./HomeRoot";
 import ErrorBoundary from "./ErrorBoundary";
 import * as UserContext from "./UserContext";
 import { AppMeQuery } from "./__generated__/AppMeQuery.graphql";
+import MovieRoot from "./MovieRoot";
 
 const { Suspense } = React;
 
@@ -16,7 +17,7 @@ function AppForAliens() {
     <Router>
       <Switch>
         <Route exact path="/">
-          <LoginPage />
+          <LoginRoot />
         </Route>
       </Switch>
     </Router>
@@ -28,7 +29,10 @@ function AppForCitizens() {
     <Router>
       <Switch>
         <Route exact path="/">
-          <HomePage />
+          <HomeRoot />
+        </Route>
+        <Route path="/movies/:id">
+          <MovieRoot />
         </Route>
       </Switch>
     </Router>
@@ -67,8 +71,9 @@ function AppGate() {
 
   // When a logged in user refreshes the page, we dont want the
   // AppForAliens to flash since the userDispatch is asynchronous
-  // so we check for me.user in between, and only this time to
-  // allow logout through the user context
+  // so we check for me.user in between, and only this time cause
+  // we do not want me.user presence to prevent from logging out
+  // through user context
 
   return (!hasLoggedIn && me?.user) || !!user ? (
     <AppForCitizens />

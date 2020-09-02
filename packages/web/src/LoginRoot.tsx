@@ -1,8 +1,8 @@
 import React from "react";
 import LoginForm from "./LoginForm";
-import styles from "./LoginPage.css";
+import styles from "./LoginRoot.css";
 
-export default function LoginPage() {
+export default function LoginRoot() {
   return (
     <div className={styles.root}>
       <LoginForm />

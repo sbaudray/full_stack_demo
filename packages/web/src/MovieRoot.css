@@ -1,0 +1,14 @@
+.movieDetailsRoot {
+  font-family: sans-serif;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-gap: 1rem;
+  margin-top: 1rem;
+}
+
+.movieDetailsRoot img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+

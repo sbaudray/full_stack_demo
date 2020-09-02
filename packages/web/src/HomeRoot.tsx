@@ -1,18 +1,18 @@
 import React from "react";
 import AppHeader from "./AppHeader";
-import styles from "./HomePage.css";
+import styles from "./HomeRoot.css";
 import MovieSearchEngine from "./MovieSearchEngine";
 import { graphql } from "react-relay";
 import { useLazyLoadQuery } from "react-relay/hooks";
 import ErrorBoundary from "./ErrorBoundary";
-import { HomePageBookcasesQuery } from "./__generated__/HomePageBookcasesQuery.graphql";
+import { HomeRootBookcasesQuery } from "./__generated__/HomeRootBookcasesQuery.graphql";
 
 let bookcasesQuery = graphql`
-  query HomePageBookcasesQuery {
+  query HomeRootBookcasesQuery {
     bookcases {
       id
       name
-      movies(first: 20) @connection(key: "HomePage_bookcases_movies") {
+      movies(first: 20) @connection(key: "HomeRoot_bookcases_movies") {
         edges {
           node {
             id
@@ -28,7 +28,7 @@ let bookcasesQuery = graphql`
 `;
 
 function UserLibraries() {
-  let data = useLazyLoadQuery<HomePageBookcasesQuery>(bookcasesQuery, {});
+  let data = useLazyLoadQuery<HomeRootBookcasesQuery>(bookcasesQuery, {});
 
   return (
     <ul style={{ listStyleType: "none" }}>
@@ -67,7 +67,7 @@ function UserLibraries() {
   );
 }
 
-export default function Homepage() {
+export default function HomeRoot() {
   return (
     <div>
       <AppHeader />
