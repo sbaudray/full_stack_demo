@@ -38,6 +38,7 @@ export default function LoginForm() {
         if (response.login?.resultErrors.length) {
           setError(response.login.resultErrors[0]);
         }
+
         if (response.login?.user) {
           userDispatch({ type: "login", payload: response.login.user });
         }

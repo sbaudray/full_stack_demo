@@ -41,20 +41,23 @@ export default function MovieSearchEngine() {
   }
 
   return (
-    <Combobox onSelect={onMovieSelection}>
-      <ComboboxInput
-        autocomplete={false}
-        value={searchString}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          setSearchString(event.target.value)
-        }
-      />
-      {searchString && searchQueryReference !== null ? (
-        <React.Suspense fallback={<LoadingSearchResults />}>
-          <SearchResults queryReference={searchQueryReference} />
-        </React.Suspense>
-      ) : null}
-    </Combobox>
+    <label className={styles.searchEngineRoot}>
+      <div>Search a movie:</div>
+      <Combobox onSelect={onMovieSelection}>
+        <ComboboxInput
+          autocomplete={false}
+          value={searchString}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setSearchString(event.target.value)
+          }
+        />
+        {searchString && searchQueryReference !== null ? (
+          <React.Suspense fallback={<LoadingSearchResults />}>
+            <SearchResults queryReference={searchQueryReference} />
+          </React.Suspense>
+        ) : null}
+      </Combobox>
+    </label>
   );
 }
 
@@ -67,6 +70,8 @@ function SearchResults({ queryReference }: SearchResultsProps) {
     searchQuery,
     queryReference
   );
+
+  if (!data.searchMovieByTitle) return null;
 
   return (
     <ComboboxPopover className={styles.searchResultsRoot}>
@@ -87,5 +92,5 @@ function SearchResults({ queryReference }: SearchResultsProps) {
 }
 
 function LoadingSearchResults() {
-  return <ComboboxPopover>Loading results</ComboboxPopover>;
+  return <div className={styles.loadingRoot}>L</div>;
 }

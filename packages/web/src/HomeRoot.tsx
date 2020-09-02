@@ -6,6 +6,7 @@ import { graphql } from "react-relay";
 import { useLazyLoadQuery } from "react-relay/hooks";
 import ErrorBoundary from "./ErrorBoundary";
 import { HomeRootBookcasesQuery } from "./__generated__/HomeRootBookcasesQuery.graphql";
+import { Link } from "react-router-dom";
 
 let bookcasesQuery = graphql`
   query HomeRootBookcasesQuery {
@@ -16,6 +17,7 @@ let bookcasesQuery = graphql`
         edges {
           node {
             id
+            imdbId
             title
             poster
             year
@@ -46,16 +48,18 @@ function UserLibraries() {
 
                 return (
                   <li key={movie.id} className={styles.movieCard}>
-                    <img
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                      src={movie.poster}
-                      alt=""
-                    />
+                    <Link to={`/movies/${movie.imdbId}`}>
+                      <img
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                        src={movie.poster}
+                        alt=""
+                      />
+                    </Link>
                   </li>
                 );
               })}
